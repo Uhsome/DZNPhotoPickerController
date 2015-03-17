@@ -671,6 +671,17 @@ DZNPhotoAspect photoAspectFromSize(CGSize aspectRatio)
     self.scrollView.contentInset = inset;
 }
 
+- (CGRect)cropRect {
+    CGRect scaledCropRect = CGRectMake(self.scrollView.contentOffset.x,
+                                       self.scrollView.contentOffset.y + self.scrollView.contentInset.top,
+                                       self.cropSize.width,
+                                       self.cropSize.width);
+    CGFloat scale = 1 / self.scrollView.zoomScale;
+    CGRect cropRect = CGRectApplyAffineTransform(scaledCropRect,
+                                                 CGAffineTransformMakeScale(scale, scale));
+    return cropRect;
+}
+
 - (void)acceptEdition:(id)sender
 {
     if (self.scrollView.zoomScale > self.scrollView.maximumZoomScale || !self.imageView.image) {
@@ -688,7 +699,7 @@ DZNPhotoAspect photoAspectFromSize(CGSize aspectRatio)
             if (self.acceptBlock) {
                 
                 NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                                 [NSValue valueWithCGRect:self.guideRect], UIImagePickerControllerCropRect,
+                                                 [NSValue valueWithCGRect:[self cropRect]], UIImagePickerControllerCropRect,
                                                  @"public.image", UIImagePickerControllerMediaType,
                                                  @(self.cropMode), DZNPhotoPickerControllerCropMode,
                                                  @(self.scrollView.zoomScale), DZNPhotoPickerControllerCropZoomScale,
