@@ -131,7 +131,6 @@ typedef NS_ENUM(NSInteger, DZNPhotoAspect) {
     [self.view addSubview:self.bottomView];
     
     self.imageView.image = self.editingImage;
-    self.scrollView.minimumZoomScale = self.cropSize.height / self.imageView.image.size.height;
     [self.view insertSubview:self.maskView aboveSubview:self.scrollView];
     
     NSDictionary *views = @{@"bottomView": self.bottomView};
@@ -188,7 +187,7 @@ typedef NS_ENUM(NSInteger, DZNPhotoAspect) {
     {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
         _scrollView.backgroundColor = [UIColor clearColor];
-        _scrollView.minimumZoomScale = 1.0;
+        _scrollView.minimumZoomScale = self.cropSize.height / self.editingImage.size.height;
         _scrollView.maximumZoomScale = 2.0;
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.showsVerticalScrollIndicator = NO;
