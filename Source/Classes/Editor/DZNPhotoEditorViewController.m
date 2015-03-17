@@ -131,6 +131,7 @@ typedef NS_ENUM(NSInteger, DZNPhotoAspect) {
     [self.view addSubview:self.bottomView];
     
     self.imageView.image = self.editingImage;
+    self.scrollView.minimumZoomScale = self.cropSize.height / self.imageView.image.size.height;
     [self.view insertSubview:self.maskView aboveSubview:self.scrollView];
     
     NSDictionary *views = @{@"bottomView": self.bottomView};
@@ -201,8 +202,10 @@ typedef NS_ENUM(NSInteger, DZNPhotoAspect) {
 - (UIImageView *)imageView
 {
     if (!_imageView)
-    {        
-        _imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    {
+        CGSize size = self.editingImage.size;
+        CGRect rect = CGRectMake(0, 0, size.width, size.height);
+        _imageView = [[UIImageView alloc] initWithFrame:rect];
         _imageView.contentMode = UIViewContentModeScaleAspectFit;
         
         [_imageView addObserver:self forKeyPath:@"image" options:NSKeyValueObservingOptionNew context:nil];
@@ -653,12 +656,8 @@ DZNPhotoAspect photoAspectFromSize(CGSize aspectRatio)
  */
 - (void)updateScrollViewContentInset
 {
-    CGSize imageSize = CGSizeAspectFit(self.imageView.image.size, self.imageView.frame.size);
-    
-    CGFloat maskHeight = (self.cropMode == DZNPhotoEditorViewControllerCropModeCircular) ? self.cropSize.width-(self.innerInset*2) : self.cropSize.height;
-    
     CGFloat hInset = (self.cropMode == DZNPhotoEditorViewControllerCropModeCircular) ? self.innerInset : 0.0;
-    CGFloat vInset = fabsf((maskHeight-imageSize.height)/2);
+    CGFloat vInset = (self.view.frame.size.height - self.cropSize.height) / 2.f;
     
     if (vInset == 0) vInset = 0.25;
     
