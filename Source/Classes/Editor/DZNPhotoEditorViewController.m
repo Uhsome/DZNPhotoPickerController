@@ -187,7 +187,9 @@ typedef NS_ENUM(NSInteger, DZNPhotoAspect) {
     {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
         _scrollView.backgroundColor = [UIColor clearColor];
-        _scrollView.minimumZoomScale = self.cropSize.height / self.editingImage.size.height;
+        CGSize editImageSize = self.editingImage.size;
+        _scrollView.minimumZoomScale = editImageSize.width > editImageSize.height
+        ? self.cropSize.height / editImageSize.height : self.cropSize.width / editImageSize.width;
         _scrollView.maximumZoomScale = 2.0;
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.showsVerticalScrollIndicator = NO;
